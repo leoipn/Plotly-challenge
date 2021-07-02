@@ -13,29 +13,28 @@ function fillDropDown(samples){
     .append("option")
     .html(x => `${x.id}`);
 }
+function showDashboard(subjectId){
+    d3.json("samples.json").then((data) => {
 
-d3.json("samples.json").then((data) => {
+        var samples = data.samples;
+        //var firstElement = samples[0].id;
+        var oneSample = samples.filter(element => element.id === subjectId)[0];
 
-    var samples = data.samples;
-    var firsElement = samples[0].id;
+        var sample_values = oneSample.sample_values;
+        var sliced_sample_values = sample_values.slice(0,10);
 
-    var firstSample = samples.filter(x => x.id === firsElement)[0];
-    var sample_values = firstSample.sample_values;
-    var sliced_sample_values = sample_values.slice(0,10);
-    //console.log(sample_values);
-    var otu_ids = firstSample.otu_ids;
-    var sliced_otu_ids= otu_ids.map(x => 'OTU '+x).slice(0,10);
-    //console.log(otu_ids);
-    
-    var otu_labels = firstSample.otu_labels;
-    var sliced_otu_labels = otu_labels.slice(0,10);
-    //console.log(otu_labels);
-    
-    fillDropDown(samples);
-    barChart(sliced_sample_values, sliced_otu_ids, sliced_otu_labels);
-    bubbleChart(otu_ids, sample_values, otu_labels);
-  });
- 
+        var otu_ids = oneSample.otu_ids;
+        var sliced_otu_ids= otu_ids.map(x => 'OTU '+x).slice(0,10);
+        
+        var otu_labels = oneSample.otu_labels;
+        var sliced_otu_labels = otu_labels.slice(0,10);
+        
+        fillDropDown(samples);
+        barChart(sliced_sample_values, sliced_otu_ids, sliced_otu_labels);
+        bubbleChart(otu_ids, sample_values, otu_labels);
+    });
+}
+
 function barChart(sample_values, otu_ids, otu_labels){
     var data = [{
         type: 'bar',
@@ -67,9 +66,15 @@ function bubbleChart(otu_ids, sample_values, otu_labels){
       var layout = {
         title: 'Marker Size and Color',
         showlegend: false,
-        height: 600,
-        width: 800
+        height: 780,
+        width: 1024
       };
       
       Plotly.newPlot('bubble', data, layout);
 }
+
+function optionChanged(x){
+    showDashboard(x);
+}
+
+showDashboard('940');
