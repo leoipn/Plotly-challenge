@@ -105,10 +105,13 @@ function gaugeChart(indicator){
           value: indicator,
           title: { text: "Scrubs per Week" },
           type: "indicator",
-          mode: "gauge+number+delta",
-          delta: { reference: 380 },
+          mode: "gauge+number",
           gauge: {
-            axis: { range: [null, 9] },
+            axis: { 
+                range: [null, 9],
+                tick0: "0",
+                dtick: "1"
+             },
             steps: [
               { range: [0, 1], color: "#f4f8f8" },
               { range: [1, 2], color: "#e9f2f2" },
@@ -120,11 +123,6 @@ function gaugeChart(indicator){
               { range: [7, 8], color: "#64a6a6" },
               { range: [8, 9], color: "#4b9a9a" }
             ],
-            threshold: {
-              line: { color: "red", width: 4 },
-              thickness: 0.75,
-              value: 490
-            }
           }
         }
       ];
