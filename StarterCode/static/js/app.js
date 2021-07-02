@@ -1,18 +1,9 @@
-function unpack(rows, index) {
-    return rows.map(function(row) {
-        //console.log(row.id);
-        return row[index];
-    });
-  }
-
-function fillDropDown(names){
-    d3.select("#selDataset")
-    .selectAll("option")
-    .data(names)
-    .enter()
-    .append("option")
-    .html(x => `${x}`);
-}
+/**
+ * This function is in charge to render the dashboard
+ * Receives a subjectId whis is used to filter the data and
+ * call the functions to build the asked charts.
+ * @param {*} subjectId This value is used to filter the data
+ */
 function showDashboard(subjectId){
     d3.json("samples.json").then((data) => {
         
@@ -43,6 +34,23 @@ function showDashboard(subjectId){
     });
 }
 
+/**
+ * Fills the dropdown object in the html with the ids
+ * @param {*} names array with the ids
+ */
+function fillDropDown(names){
+    d3.select("#selDataset")
+    .selectAll("option")
+    .data(names)
+    .enter()
+    .append("option")
+    .html(x => `${x}`);
+}
+
+/**
+ * Fills the metadata section
+ * @param {*} oneMetadata the metadata info
+ */
 function fillMetaData(oneMetadata){
     var div = d3.select("#sample-metadata")
     div.html("");
@@ -55,6 +63,12 @@ function fillMetaData(oneMetadata){
     div.append("p").text(`WFREQ: ${oneMetadata.wfreq}`);
 }
 
+/**
+ * Builds a barchart
+ * @param {*} sample_values the sample values for the x axis
+ * @param {*} otu_ids the otu ids for the y axis
+ * @param {*} otu_labels the otu labels
+ */
 function barChart(sample_values, otu_ids, otu_labels){
     var data = [{
         type: 'bar',
@@ -68,6 +82,12 @@ function barChart(sample_values, otu_ids, otu_labels){
 
 }
 
+/**
+ * Builds a bubble chart
+ * @param {*} otu_ids the out ids for the x axis
+ * @param {*} sample_values the sample values for the y axis
+ * @param {*} otu_labels the otu labels
+ */
 function bubbleChart(otu_ids, sample_values, otu_labels){
     var trace1 = {
         x: otu_ids,
@@ -75,9 +95,8 @@ function bubbleChart(otu_ids, sample_values, otu_labels){
         text:otu_labels,
         mode: 'markers',
         marker: {
-          //color: [41,342],//otu_ids,
+          color: otu_ids,
           sizeref: 1.2,
-          //opacity: [1, 0.8, 0.6, 0.4],
           size: sample_values
         }
       };
@@ -86,7 +105,6 @@ function bubbleChart(otu_ids, sample_values, otu_labels){
       
       var layout = {
         showlegend: false,
-        colorway : ['#f3cec9', '#e7a4b6', '#cd7eaf', '#a262a9', '#6f4d96', '#3d3b72', '#182844'],
         xaxis: {
             title: {
               text: 'OTU ID',
@@ -97,55 +115,15 @@ function bubbleChart(otu_ids, sample_values, otu_labels){
       Plotly.newPlot('bubble', data, layout, {scrollZoom: true});
 }
 
-function gaugeChart(indicator){
-
-    var data = [
-        {
-          domain: { x: [0, 1], y: [0, 1] },
-          value: indicator,
-          title: { text: "Scrubs per Week" },
-          type: "indicator",
-          mode: "gauge+number",
-          gauge: {
-            axis: { 
-                range: [null, 9],
-                tick0: "0",
-                dtick: "1"
-             },
-            steps: [
-              { range: [0, 1], color: "#f4f8f8" },
-              { range: [1, 2], color: "#e9f2f2" },
-              { range: [2, 3], color: "#d4e6e5" },
-              { range: [3, 4], color: "#bed9d8" },
-              { range: [4, 5], color: "#a8cccd" },
-              { range: [5, 6], color: "#92bfc0" },
-              { range: [6, 7], color: "#7bb4b3" },
-              { range: [7, 8], color: "#64a6a6" },
-              { range: [8, 9], color: "#4b9a9a" }
-            ],
-          }
-        }
-      ];
-      
-      var layout = { 
-          width: 600, 
-          height: 450, 
-          margin: { t: 0, b: 0 }, 
-          title: {
-            text:'Plot Title',
-            font: {
-              family: 'Courier New, monospace',
-              size: 24
-            },
-            xref: 'paper',
-            x: 0.05,
-          }
-        };
-      Plotly.newPlot('gauge', data, layout);
+/**
+ * This function updates the charts according to the selected ID
+ * @param {*} id the ID to search for 
+ */
+function optionChanged(id){
+    showDashboard(id);
 }
 
-function optionChanged(x){
-    showDashboard(x);
-}
-
+/**
+ * This first call initializes the dashboard.
+ */
 showDashboard('940');
