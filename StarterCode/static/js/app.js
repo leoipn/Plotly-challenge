@@ -38,6 +38,7 @@ function showDashboard(subjectId){
         fillDropDown(names);
         fillMetaData(oneMetadata);
         barChart(sliced_sample_values, sliced_otu_ids, sliced_otu_labels);
+        gaugeChart(oneMetadata.wfreq);
         bubbleChart(otu_ids, sample_values, otu_labels);
     });
 }
@@ -74,7 +75,7 @@ function bubbleChart(otu_ids, sample_values, otu_labels){
         text:otu_labels,
         mode: 'markers',
         marker: {
-          color: [41,342],//otu_ids,
+          //color: [41,342],//otu_ids,
           sizeref: 1.2,
           //opacity: [1, 0.8, 0.6, 0.4],
           size: sample_values
@@ -85,6 +86,7 @@ function bubbleChart(otu_ids, sample_values, otu_labels){
       
       var layout = {
         showlegend: false,
+        colorway : ['#f3cec9', '#e7a4b6', '#cd7eaf', '#a262a9', '#6f4d96', '#3d3b72', '#182844'],
         xaxis: {
             title: {
               text: 'OTU ID',
@@ -93,6 +95,55 @@ function bubbleChart(otu_ids, sample_values, otu_labels){
       };
       
       Plotly.newPlot('bubble', data, layout, {scrollZoom: true});
+}
+
+function gaugeChart(indicator){
+
+    var data = [
+        {
+          domain: { x: [0, 1], y: [0, 1] },
+          value: indicator,
+          title: { text: "Scrubs per Week" },
+          type: "indicator",
+          mode: "gauge+number+delta",
+          delta: { reference: 380 },
+          gauge: {
+            axis: { range: [null, 9] },
+            steps: [
+              { range: [0, 1], color: "#f4f8f8" },
+              { range: [1, 2], color: "#e9f2f2" },
+              { range: [2, 3], color: "#d4e6e5" },
+              { range: [3, 4], color: "#bed9d8" },
+              { range: [4, 5], color: "#a8cccd" },
+              { range: [5, 6], color: "#92bfc0" },
+              { range: [6, 7], color: "#7bb4b3" },
+              { range: [7, 8], color: "#64a6a6" },
+              { range: [8, 9], color: "#4b9a9a" }
+            ],
+            threshold: {
+              line: { color: "red", width: 4 },
+              thickness: 0.75,
+              value: 490
+            }
+          }
+        }
+      ];
+      
+      var layout = { 
+          width: 600, 
+          height: 450, 
+          margin: { t: 0, b: 0 }, 
+          title: {
+            text:'Plot Title',
+            font: {
+              family: 'Courier New, monospace',
+              size: 24
+            },
+            xref: 'paper',
+            x: 0.05,
+          }
+        };
+      Plotly.newPlot('gauge', data, layout);
 }
 
 function optionChanged(x){
